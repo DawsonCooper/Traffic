@@ -3,6 +3,8 @@ import numpy as np
 import os
 import sys
 import tensorflow as tf
+from tensorflow.keras.models import Sequential
+from tensorflow.keras.layers import Conv2D, MaxPooling2D, Flatten, Dense, Activation, Dropout
 
 from sklearn.model_selection import train_test_split
 
@@ -11,7 +13,6 @@ IMG_WIDTH = 30
 IMG_HEIGHT = 30
 NUM_CATEGORIES = 43
 TEST_SIZE = 0.4
-
 
 def main():
 
@@ -91,9 +92,19 @@ def get_model():
     `input_shape` of the first layer is `(IMG_WIDTH, IMG_HEIGHT, 3)`.
     The output layer should have `NUM_CATEGORIES` units, one for each category.
     """
+    model = Sequential()
+    def add_layers(model):
+        model.add(Conv2D(64, (3,3), activation='relu', input_shape=(IMG_WIDTH, IMG_HEIGHT, 3)))
+        model.add(MaxPooling2D(pool_size=(2,2)))
+    
+    add_layers(model)
+    add_layers(model)
+    model.add(Flatten())
+    model.add(Dense(64, activation='relu'))
 
-    raise NotImplementedError
-
+    model.add(Dense(NUM_CATEGORIES, activation='sigmoid'))
+    model.compile(optimizer='adam', loss='binary_crossentropy', metrics=['accuracy'])
+    return model
 
 if __name__ == "__main__":
     main()
